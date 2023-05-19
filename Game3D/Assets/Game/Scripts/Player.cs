@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
         _controller.Move(direction * Time.deltaTime);
         Vector3 velocity = direction * _playerSpeed;
         velocity.y -= _gravity;
+        // Override velocity to allocate the global rotation to our player
+        velocity = transform.transform.TransformDirection(velocity); 
         _controller.Move (velocity * Time.deltaTime);
     }
 }
