@@ -9,21 +9,48 @@ public class Player : MonoBehaviour
     private float _playerSpeed = 3.5f;
     [SerializeField]
     private float _gravity = 9.81f;
+    [SerializeField]
+    private GameObject _muzzleFlash; 
+    [SerializeField]
+    private GameObject _hitMarkerPrefab; 
+    [SerializeField]
+    private AudioSource _weaponAudio;
+    [SerializeField]
+    private int _currentAmmo;
+    
+    private int _maxAmmo = 250;
+    private bool _isReloading = false;
     // Start is called before the first frame update
     void Start()
     {
         _controller = GetComponent<CharacterController>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        _currentAmmo = _maxAmmo;
     }
 
     // Update is called once per frame
     void Update()
     {   
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetMouseButton(0) && _currentAmmo > 0)
+        {
+           Shoot();
+        }
+        else 
+        {
+            _muzzleFlash.SetActive(false);
+            _weaponAudio.Stop();
+        }
+         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && _isReloading == false)
+        {
+            _isReloading = true;
+           StartCoroutine(Reload());
         }
         playerMovement();
     }
@@ -38,5 +65,30 @@ public class Player : MonoBehaviour
         // Override velocity to allocate the global rotation to our player
         velocity = transform.transform.TransformDirection(velocity); 
         _controller.Move (velocity * Time.deltaTime);
+    }
+    void Shoot()
+    {
+         _muzzleFlash.SetActive(true);
+            _currentAmmo --;
+            if (_weaponAudio.isPlaying == false)
+            {
+                _weaponAudio.Play();
+            }
+            // Ray casting y efecto del impacto laser con un vector perpendicular al punto que golpeamos (lookrotation)
+            Ray gunRayCasting = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            RaycastHit hitInfo;
+            if(Physics.Raycast(gunRayCasting, out hitInfo))
+            {
+              // hacemos typecasting de la instancia como una buena práctica  
+              GameObject hitMarker = (GameObject)Instantiate(_hitMarkerPrefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
+              Destroy(hitMarker, 1f);
+            }
+    }
+    // Creamos la funcion como una instancia de ienumerator para luego ser llamada como co-rutina y programar una pausa de recarga
+    IEnumerator Reload()
+    {
+        yield return new WaitForSeconds(1f);
+        _currentAmmo = _maxAmmo;
+        _isReloading = false;
     }
 }
