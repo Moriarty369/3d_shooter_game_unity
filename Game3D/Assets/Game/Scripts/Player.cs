@@ -18,21 +18,24 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _currentAmmo;
     
-    private int _maxAmmo = 250;
+    public int _maxAmmo = 350;
     private bool _isReloading = false;
-    // Start is called before the first frame update
+    private UIManager _uiManager;
+
+
     void Start()
     {
         _controller = GetComponent<CharacterController>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         _currentAmmo = _maxAmmo;
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {   
-        if (Input.GetMouseButton(0) && _currentAmmo > 0)
+        if (!_isReloading && Input.GetMouseButton(0) && _currentAmmo > 0)
         {
            Shoot();
         }
@@ -54,6 +57,8 @@ public class Player : MonoBehaviour
         }
         playerMovement();
     }
+
+
     void playerMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -66,10 +71,13 @@ public class Player : MonoBehaviour
         velocity = transform.transform.TransformDirection(velocity); 
         _controller.Move (velocity * Time.deltaTime);
     }
+
+    
     void Shoot()
     {
          _muzzleFlash.SetActive(true);
             _currentAmmo --;
+            _uiManager.UpdateAmmo(_currentAmmo);
             if (_weaponAudio.isPlaying == false)
             {
                 _weaponAudio.Play();
@@ -89,6 +97,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         _currentAmmo = _maxAmmo;
+        _uiManager.UpdateAmmo(_currentAmmo);
         _isReloading = false;
     }
 }
