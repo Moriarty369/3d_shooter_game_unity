@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     public int _maxAmmo = 350;
     private bool _isReloading = false;
     private UIManager _uiManager;
-
+    public bool hasCoin = false;
 
     void Start()
     {
