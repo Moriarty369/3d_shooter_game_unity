@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
     private AudioSource _weaponAudio;
     [SerializeField]
     private int _currentAmmo;
+    [SerializeField]
+    private GameObject _weapon;
     
     public int _maxAmmo = 350;
     private bool _isReloading = false;
@@ -99,5 +101,9 @@ public class Player : MonoBehaviour
         _currentAmmo = _maxAmmo;
         _uiManager.UpdateAmmo(_currentAmmo);
         _isReloading = false;
+    }
+    public void EnableWeapon()
+    {
+        _weapon.SetActive(true);
     }
 }
