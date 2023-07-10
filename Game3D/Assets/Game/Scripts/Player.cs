@@ -92,8 +92,8 @@ public class Player : MonoBehaviour
                 // hacemos typecasting de la instancia como una buena práctica  
                 GameObject hitMarker = (GameObject)Instantiate(_hitMarkerPrefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(hitMarker, 1f);
-                // Referenciamos el objeto (script) Destructable para hacer animación de la caja destruida
-                Destructable crate = hitInfo.transform.GetComponent<Destructable>();
+                // Referenciamos el objeto (script) Destroyable para hacer animación de la caja destruida
+                Destroyable crate = hitInfo.transform.GetComponent<Destroyable>();
                 if (crate!= null)
                 {
                     crate.DestroyCrate();
