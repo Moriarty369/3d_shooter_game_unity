@@ -89,9 +89,15 @@ public class Player : MonoBehaviour
             RaycastHit hitInfo;
             if(Physics.Raycast(gunRayCasting, out hitInfo))
             {
-              // hacemos typecasting de la instancia como una buena práctica  
-              GameObject hitMarker = (GameObject)Instantiate(_hitMarkerPrefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-              Destroy(hitMarker, 1f);
+                // hacemos typecasting de la instancia como una buena práctica  
+                GameObject hitMarker = (GameObject)Instantiate(_hitMarkerPrefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
+                Destroy(hitMarker, 1f);
+                // Referenciamos el objeto (script) Destructable para hacer animación de la caja destruida
+                Destructable crate = hitInfo.transform.GetComponent<Destructable>();
+                if (crate!= null)
+                {
+                    crate.DestroyCrate();
+                }
             }
     }
     // Creamos la funcion como una instancia de ienumerator para luego ser llamada como co-rutina y programar una pausa de recarga
